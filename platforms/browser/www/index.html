@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title>Collision</title>
+
+        <!-- Load the library script -->
+	    <script src="js/index.js"></script>
+	
+	    <!-- Load some CSS for site and button styling (optional) -->
+	    <link rel="stylesheet" href="css/index.css" title="main-template"> 
+    
+        <script type="text/javascript" src="cordova.js"></script>
+      
+    </head>
+    <body>
+        <div> <!-- Ober boss div ist son boss die kinder müssen nicht eingerückt werden. -->
+        <h1>COLLISIONS</h1>
+    
+        <button class="start" onclick="startGame()">Start Game</button>
+        
+        
+        <div class="contentBox">
+            <div class="menu">
+                <div class="time">Time: 00:00</div>
+                <div class="coinsCounter">Coins: 000</div>
+            </div>
+            <br>
+            <div class="board">
+                <div class="ball"></div>
+                <div class="enemy"></div>
+                <div class="coins"></div>
+                <div class="alert">
+                        <center><p id = "popupText"></p></center>
+                        <button class="yes" onclick="popupButtonPressed(true)">Yes</button>
+                        <button class="no" onclick="popupButtonPressed(false)">No</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        <pre class="output"></pre>
+        <p id="test"></p> <!--test1-->
+        <p id="test2"></p><!--test2-->
+        <p id="test3"></p><!--test3-->
+        <p id="test4"></p><!--test4-->
+        <p id="test5"></p><!--test5-->
+        <p id="test6"></p><!--test6-->
+        <p id="test7"></p><!--test7-->
+        <p id="test8"></p><!--test8-->
+        <p id="test9"></p><!--test9-->
+
+        <script>
+
+            var garden = document.querySelector(".board");
+            var ball   = document.querySelector(".ball");
+            var enemy = document.querySelector(".enemy");
+            var time = document.querySelector(".time");
+            var coins = document.querySelector(".coins");
+            var coinsCounter = document.querySelector(".coinsCounter")
+            var output = document.querySelector(".output");
+
+            var ballX;
+            var ballY;
+            var enemyX = 0;
+            var enemyY = 0;
+            var coinX = 75;
+            var coinY = 75;
+            var moveDelay = 100;
+            var seconds = 0;
+            var minutes = 0;
+            var numberCoins = 0;
+            var coinCollected = false;
+            var gameStarted = false;
+            var gameOver = false;
+            
+            var maxX = garden.clientWidth  - ball.clientWidth;
+            var maxY = garden.clientHeight - ball.clientHeight;
+            
+            function showPopup() {
+                document.getElementsByTagName("body")[0].style.background = "#454545";
+                document.querySelector(".alert").style.display = "block";
+                document.querySelector("#popupText").innerHTML = "GAME OVER!!! <br/>Your " + time.innerHTML + 
+                    "<br/> Your Coins: " + numberCoins + "<br/>Do you want to try again?";
+            }
+
+            function hidePopup() {               
+                document.getElementsByTagName("body")[0].style.background = "#ffffff";
+                document.querySelector(".alert").style.display = "none";
+            }
+
+            addEventListener("deviceorientation", function(event) {
+                var x;
+                var y;
+                if(gameStarted && !gameOver) {
+                    x = event.gamma; // In degree in the range [-90,90]
+                    y = event.beta; // In degree in the range [-180,180]
+                    //output.innerHTML  = "x: " + Math.round(x) + "  " + "y: " + Math.round(y) + "\n";
+                    x = defineBoundaries(x); //between 0 and 90
+                    y = defineBoundaries(y); //between 0 and 90
+                    //document.querySelector('#test').innerHTML = "mod x " + Math.round(x) + "   " + "mod y " + Math.round(y);
+                    setBallPosition(Math.round(maxX*x/90), Math.round(maxY*y/90)); //back to pixel translation (between 0 and 280)
+                    collectCoin();
+                    //document.querySelector('#test2').innerHTML = "btop " + ball.style.top + "   " + "bleft " + ball.style.left;  
+                } 
+                else if(!gameStarted && !gameOver) {
+                    setBallPosition(140,140);
+                } else { //gameOver
+                    setBallPosition(x,y);
+               }
+            }, true);
+
+            setInterval(function() {
+                if(gameStarted) {
+                    moveDelay = moveDelay - 1 + (moveDelay < 10);
+                    //document.querySelector('#test6').innerHTML = "moveDelay: " + JSON.stringify(moveDelay);
+                }
+            },300);
+            setTimeout(moveEnemy, 100); 
+
+            function setEnemyPostion(x,y) {
+               if(gameStarted && !gameOver) {
+                    enemyX = x;
+                    enemy.style.left = x + "px";
+                    enemyY = y;
+                    enemy.style.top = y + "px";
+                    //document.querySelector('#test4').innerHTML = "xAbst " + Math.abs(ballX - enemyX) + " " + "yAbst " + Math.abs(ballY-enemyY);
+                    if (((Math.abs(ballX - enemyX)) + (Math.abs(ballY-enemyY))) <= 20) {
+                        stopGame();
+                        //document.querySelector('#test5').innerHTML = "GAME OVER" + "  gameOver: " + gameOver + "  gameStarted: " + gameStarted; 
+                    }                    
+                    //document.querySelector('#test3').innerHTML = "etop " + enemy.style.top + " " + "eleft " + enemy.style.left;    
+                } 
+            }
+
+            function setBallPosition(x, y) {
+                ballX = x;
+                ball.style.left = ballX + "px";
+                ballY = y;
+                ball.style.top = ballY + "px";
+            }
+
+            function moveEnemy() {
+                    var nextXPos = enemyX - 1 + 2 * (ballX > enemyX);
+                    var nextYPos = enemyY - 1 + 2 * (ballY > enemyY);
+                    setEnemyPostion(nextXPos, nextYPos);
+                    setTimeout(moveEnemy, moveDelay);
+            }
+
+            function defineBoundaries(x) {
+                if (x >  45 && x < 180) { x =  45};
+                if (x < -45 || x > 180) { x = -45};
+                x += 45;
+                return x;
+            }
+
+            function startGame() {
+                gameStarted = true;
+                gameOver = false;
+                setCoin(75,75);
+            }
+
+            function resetGame() {
+                moveDelay = 100;
+                seconds = 0;
+                minutes = 0;
+                numberCoins = 0;
+                time.innerHTML = "Time: 00:00";
+                coinsCounter.innerHTML = "Coins: 000";
+                setBallPosition(140,140);
+                setEnemyPostion(0,0);
+            }
+
+            function stopGame() {
+                showPopup();
+                resetGame();
+                gameStarted = false;
+                gameOver = false;
+            }
+
+            function popupButtonPressed(yes) {
+                hidePopup();
+                if(yes)
+                    startGame();
+            }
+            
+            setInterval(function() {
+                if(gameStarted) {
+                    if (seconds < 59) {
+                        seconds++;
+                        time.innerHTML = "Time: " + format(minutes) + ":" + format(seconds);
+                    } else {
+                        seconds = 0;
+                        minutes++;
+                        time.innerHTML = "Time: " + format(minutes) + ":" + format(seconds);
+                    }    
+                }     
+            }, 1000);
+
+            function format(number) {
+                if(number < 10) {
+                    number = "0" + number;
+                } 
+                return number;
+            }  
+
+            function spornCoin() {
+                if(gameStarted && coinCollected) {
+                    coinCollected = false;
+                    var x = Math.round((Math.random()*maxX)+1);
+                    var y = Math.round((Math.random()*maxY)+1);
+                    setCoin(x,y);
+                    //document.querySelector('#test9').innerHTML = "coin X: " + coinX + "coin Y: " + coinY;
+                }
+            }
+
+            function setCoin(x,y) {
+                coinX = x
+                coins.style.left = x + "px";
+                coinY = y;
+                coins.style.top = y + "px";
+            }
+
+            function collectCoin() {
+                if( ((Math.abs(ballX - coinX)) < 15) &&  ((Math.abs(ballY-coinY)) < 15) ) {
+                    numberCoins++;
+                    coinsCounter.innerHTML = "Coins: " + formatCoins(numberCoins);
+                    coinCollected = true;
+                    spornCoin();
+                }
+            }
+
+            function formatCoins(number) {
+                if(number<10) {
+                    number = "00" + number;
+                } else if(number < 100) {
+                    number = "0" +  number;
+                } else {
+                    number = 100;
+                }
+                return number;
+            }
+ 
+        </script>
+
+    </body>
+</html>
