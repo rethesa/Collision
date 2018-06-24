@@ -1,24 +1,43 @@
 .alert {
   position: relative;
   display: none;
-  width: 200px;
-  height: 135px;
+  width: 250px;
+  height: 200px;
   background-color: white; 
   border: 5px solid rgba(100,100,100,0.3);
   padding: 5px;
   margin: auto;
-  margin-top: 25%;
+  margin-top: 10%;
+  font-size: 20px;
   color: black;
+  border-radius: 5px;
 }
 
 .yes {
+  position: relative;
+  top: 20px;
+  height: 35px;
   float: left;
-  width: 50%;
+  width: 49%;
+  background-color: rgba(100,100,100,0.3);
+  border-radius: 3px;
+  font-size: 20px;
+  border: 2px solid black;
+  margin: 1px;
 }
 
 .no {
+  position: relative;
+  top: 20px;
+  height: 35px;
   float: left;
-  width: 50%;
+  width: 49%;
+  background-color: rgba(100,100,100,0.3);
+  border-radius: 3px;
+  font-size: 20px;
+  border: 2px solid black;
+  padding: 2px;
+  margin: 1px;
 }
 
 body{

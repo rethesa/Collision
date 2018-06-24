@@ -4,52 +4,43 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <title>Collision</title>
-
-        <!-- Load the library script -->
-	    <script src="js/index.js"></script>
-	
-	    <!-- Load some CSS for site and button styling (optional) -->
 	    <link rel="stylesheet" href="css/index.css" title="main-template"> 
-    
         <script type="text/javascript" src="cordova.js"></script>
       
     </head>
     <body>
-        <div> <!-- Ober boss div ist son boss die kinder müssen nicht eingerückt werden. -->
-        <h1>COLLISIONS</h1>
-    
-        <button class="start" onclick="startGame()">Start Game</button>
-        
-        
-        <div class="contentBox">
-            <div class="menu">
-                <div class="time">Time: 00:00</div>
-                <div class="coinsCounter">Coins: 000</div>
-            </div>
-            <br>
-            <div class="board">
-                <div class="ball"></div>
-                <div class="enemy"></div>
-                <div class="coins"></div>
-                <div class="alert">
-                        <center><p id = "popupText"></p></center>
-                        <button class="yes" onclick="popupButtonPressed(true)">Yes</button>
-                        <button class="no" onclick="popupButtonPressed(false)">No</button>
+        <div> 
+            <h1>COLLISIONS</h1>
+            <button class="start" onclick="startGame()">Start Game</button>
+            <div class="contentBox">
+                <div class="menu">
+                    <div class="time">Time: 00:00</div>
+                    <div class="coinsCounter">Coins: 000</div>
+                </div>
+                <br>
+                <div class="board">
+                    <div class="ball"></div>
+                    <div class="enemy"></div>
+                    <div class="coins"></div>
+                    <div class="alert">
+                            <center><p id = "popupText"></p></center>
+                            <button class="yes" onclick="popupButtonPressed(true)">Yes</button>
+                            <button class="no" onclick="popupButtonPressed(false)">No</button>
+                    </div>
                 </div>
             </div>
         </div>
-        </div>
         
         <pre class="output"></pre>
-        <p id="test"></p> <!--test1-->
-        <p id="test2"></p><!--test2-->
-        <p id="test3"></p><!--test3-->
-        <p id="test4"></p><!--test4-->
-        <p id="test5"></p><!--test5-->
-        <p id="test6"></p><!--test6-->
-        <p id="test7"></p><!--test7-->
-        <p id="test8"></p><!--test8-->
-        <p id="test9"></p><!--test9-->
+        <p id="test"></p> 
+        <p id="test2"></p>
+        <p id="test3"></p>
+        <p id="test4"></p>
+        <p id="test5"></p>
+        <p id="test6"></p>
+        <p id="test7"></p>
+        <p id="test8"></p>
+        <p id="test9"></p>
 
         <script>
 
@@ -96,15 +87,11 @@
                 if(gameStarted && !gameOver) {
                     x = event.gamma; // In degree in the range [-90,90]
                     y = event.beta; // In degree in the range [-180,180]
-                    //output.innerHTML  = "x: " + Math.round(x) + "  " + "y: " + Math.round(y) + "\n";
                     x = defineBoundaries(x); //between 0 and 90
                     y = defineBoundaries(y); //between 0 and 90
-                    //document.querySelector('#test').innerHTML = "mod x " + Math.round(x) + "   " + "mod y " + Math.round(y);
                     setBallPosition(Math.round(maxX*x/90), Math.round(maxY*y/90)); //back to pixel translation (between 0 and 280)
                     collectCoin();
-                    //document.querySelector('#test2').innerHTML = "btop " + ball.style.top + "   " + "bleft " + ball.style.left;  
-                } 
-                else if(!gameStarted && !gameOver) {
+                } else if(!gameStarted && !gameOver) {
                     setBallPosition(140,140);
                 } else { //gameOver
                     setBallPosition(x,y);
@@ -114,7 +101,6 @@
             setInterval(function() {
                 if(gameStarted) {
                     moveDelay = moveDelay - 1 + (moveDelay < 10);
-                    //document.querySelector('#test6').innerHTML = "moveDelay: " + JSON.stringify(moveDelay);
                 }
             },300);
             setTimeout(moveEnemy, 100); 
@@ -125,12 +111,9 @@
                     enemy.style.left = x + "px";
                     enemyY = y;
                     enemy.style.top = y + "px";
-                    //document.querySelector('#test4').innerHTML = "xAbst " + Math.abs(ballX - enemyX) + " " + "yAbst " + Math.abs(ballY-enemyY);
                     if (((Math.abs(ballX - enemyX)) + (Math.abs(ballY-enemyY))) <= 20) {
                         stopGame();
-                        //document.querySelector('#test5').innerHTML = "GAME OVER" + "  gameOver: " + gameOver + "  gameStarted: " + gameStarted; 
                     }                    
-                    //document.querySelector('#test3').innerHTML = "etop " + enemy.style.top + " " + "eleft " + enemy.style.left;    
                 } 
             }
 
@@ -211,7 +194,6 @@
                     var x = Math.round((Math.random()*maxX)+1);
                     var y = Math.round((Math.random()*maxY)+1);
                     setCoin(x,y);
-                    //document.querySelector('#test9').innerHTML = "coin X: " + coinX + "coin Y: " + coinY;
                 }
             }
 
